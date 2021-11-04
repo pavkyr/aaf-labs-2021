@@ -120,7 +120,7 @@ class SQL:
     if temp[0].upper() not in ['CREATE','INSERT','PRINT_INDEX','SEARCH']:
       return print('ERROR')
     if temp[0].upper()=='SEARCH':
-      self.print_index(text)    
+      self.search(text)    
 
   def process(self):
     FLAG=True
@@ -131,6 +131,5 @@ class SQL:
           FLAG=False
         else:
           self.parser(i)
-
 s=SQL()
 s.process()
