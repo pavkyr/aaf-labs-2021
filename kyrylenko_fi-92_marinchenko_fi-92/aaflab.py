@@ -1,6 +1,5 @@
 import re
 
-
 class Table:
   __index=None
   __DICT=None
@@ -12,8 +11,9 @@ class Table:
     self.__INVERT_DICT={}    
 
   def addToTable(self,b):
-    self.__DICT[self.__index]=b
-    self.__index+=1
+    if type(b)==list:
+      self.__DICT[self.__index]=b
+      self.__index+=1
 
   def invert_index(self):
     self.__INVERT_DICT={}
@@ -51,8 +51,8 @@ class SQL:
 
   def create(self,text):
     template=re.findall(r'(CREATE)\s+(\w+)\s*;',text.upper())
-    name=re.findall(r'\w\s+(\w+)',text)[0]
     if len(template)!=0:
+      name=re.findall(r'\w\s+(\w+)',text)[0]
       self.__tablenames.append(name)
       self.__OBJ[name]=Table()
     else:
@@ -60,8 +60,8 @@ class SQL:
   
   def insert(self,text):
     template=re.findall(r'(INSERT)\s+(\w+)\s+\{([^}]+)\}\s*\;',text.upper())
-    name=re.findall(r'\w\s+(\w+)',text)[0]
     if len(template)!=0:
+      name=re.findall(r'\w\s+(\w+)',text)[0]
       if name in self.__tablenames:
         self.__OBJ[name].addToTable(self.__getNumber(list(template[0])[-1]))
       else:
@@ -71,8 +71,8 @@ class SQL:
 
   def print_index(self,text):
     template=re.findall(r'(PRINT_INDEX)\s+(\w+)\s*\;',text.upper())
-    name=re.findall(r'\w\s+(\w+)',text)[0]
     if len(template)!=0:
+      name=re.findall(r'\w\s+(\w+)',text)[0]
       if name in self.__tablenames:
         self.__OBJ[name].invert_index()
         return self.__OBJ[name].showInvertIndex() 
@@ -83,8 +83,8 @@ class SQL:
 
   def search(self,text):
     template=re.findall(r'(SEARCH)\s+(\w+)\s*\;',text.upper())
-    name=re.findall(r'\w\s+(\w+)',text)[0]
     if len(template)!=0:
+      name=re.findall(r'\w\s+(\w+)',text)[0]
       if name in self.__tablenames:
         return self.__OBJ[name].showTable() 
       else:
@@ -96,7 +96,7 @@ class SQL:
     try:
       result = [int(item) for item in text.split(',')]
     except:
-      return 0
+      return print('error')
     return result
   
   def input_text(self):
@@ -131,5 +131,6 @@ class SQL:
           FLAG=False
         else:
           self.parser(i)
+
 s=SQL()
 s.process()
