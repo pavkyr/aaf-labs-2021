@@ -1,7 +1,5 @@
 # Основи Аналізу Алгоритмів 2021: Комп'ютерний Практикум
 
----
-
 ## Корисні посилання
 - **Завдання практикуму**: https://docs.google.com/document/d/1-NpjvwB6mpn-HWuNhUVCpbKtujA8wR0cvJG6XZ5-Y94/edit?usp=sharing.
 - **Вступне відео**:
