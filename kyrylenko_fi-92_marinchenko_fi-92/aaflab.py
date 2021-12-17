@@ -16,7 +16,6 @@ class Table:
 
   def invert_index(self):
     if len(self.__INVERT_DICT)==0:
-      print('create new')
       t=[]
       for i in self.__DICT.keys():
         t+=self.__DICT[i]
@@ -29,7 +28,6 @@ class Table:
             if item in self.__INVERT_DICT:
               self.__INVERT_DICT[item].add(i)
     else:
-      print('add new')
       for i in self.__DICT[self.__index-1]:
         if i not in self.__INVERT_DICT:
           self.__INVERT_DICT[i]=set()
@@ -38,7 +36,7 @@ class Table:
 
   def contains(self,find):
     if len(find)==0:
-      self.showTable()
+      print('False') 
     else:
       newdict={}
       for i in find:
@@ -63,7 +61,10 @@ class Table:
 
 
   def scontains(self,find):
-    if len(find)==0:
+    sizes=[len(x) for x in self.__DICT.values()]
+    if len(find)>max(sizes):
+      print('{}')
+    elif len(find)==0:
       self.showTable()
     else:
       a=set()
@@ -273,7 +274,6 @@ class SQL:
         break
       for i in LISTTEXT:
         self.parser(i)
-
 
 s=SQL()
 S.process()
