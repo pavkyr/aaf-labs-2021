@@ -15,24 +15,11 @@ class Table:
       self.__index+=1
 
   def invert_index(self):
-    if len(self.__INVERT_DICT)==0:
-      t=[]
-      for i in self.__DICT.keys():
-        t+=self.__DICT[i]
-      for i in range(1,len(self.__DICT.values())+1):
-        check=self.__DICT[i]
-        for item in set(t):
-          if item in check:
-            if item not in self.__INVERT_DICT:
-              self.__INVERT_DICT[item]=set()
-            if item in self.__INVERT_DICT:
-              self.__INVERT_DICT[item].add(i)
-    else:
-      for i in self.__DICT[self.__index-1]:
-        if i not in self.__INVERT_DICT:
-          self.__INVERT_DICT[i]=set()
-        if i in self.__INVERT_DICT.keys():
-          self.__INVERT_DICT[i].add(self.__index-1)
+    for i in self.__DICT[self.__index-1]:
+      if i not in self.__INVERT_DICT:
+        self.__INVERT_DICT[i]=set()
+      if i in self.__INVERT_DICT.keys():
+        self.__INVERT_DICT[i].add(self.__index-1)
 
   def contains(self,find):
     if len(find)==0:
@@ -42,12 +29,17 @@ class Table:
       for i in find:
         if i in self.__INVERT_DICT.keys():
           newdict[i]=self.__INVERT_DICT.get(i)
+        else:
+          print('False')
+          return
 
       temp=set()
-      for i in newdict.values():
-        if len(temp)==0:
-          temp=i.copy()
-        temp.intersection_update(i)
+      i=0
+      for item in newdict.values():
+        if i==0:
+          temp=item.copy()
+        temp.intersection_update(item)
+        i+=1
 
       res=[]
       for i in temp:
@@ -61,77 +53,45 @@ class Table:
 
 
   def scontains(self,find):
-    sizes=[len(x) for x in self.__DICT.values()]
-    if len(find)>max(sizes):
-      print('{}')
-    elif len(find)==0:
+    if len(find)==0:
       self.showTable()
     else:
       a=set()
-      if all(elem in self.__INVERT_DICT.keys() for elem in find):
-        for i in find:
-          if i in self.__INVERT_DICT.keys():
-            if len(a)==0:
-              a=self.__INVERT_DICT.get(i).copy()
-            a.intersection_update(self.__INVERT_DICT.get(i))
-      else:
-        print('not found') 
-
-      if len(a)==0:
-        print('{}')
+      i=0
+      for item in find:
+        if all(elem in self.__INVERT_DICT.keys() for elem in find):
+          if i==0:
+            a=self.__INVERT_DICT.get(item).copy()
+          else:
+            a.intersection_update(self.__INVERT_DICT.get(item))
+          i+=1
+        else:
+          print ('{}')
+          break
       for i in a:
         print(self.__DICT.get(i))
+      
 
   def intersects(self,find):
-    #print(f'find is {find} and type is {type(find)}')
     if len(find)==0:
       self.showTable()
     else:
       a=set()
       for i in find:
         if i in self.__INVERT_DICT.keys():
-          if len(a)==0:
-            a=self.__INVERT_DICT.get(i).copy()
           a.update((self.__INVERT_DICT.get(i)))
 
       for i in a:
         print(self.__DICT.get(i))
 
   def contained_by(self,find):
-    if len(find)==0:
-      print('not found')
-    else: 
-      newdict={}
-      for i in find:
-        if i in self.__INVERT_DICT.keys():
-          newdict[i]=self.__INVERT_DICT.get(i)
-      unique=set()
-
-      for i in newdict.values():
-        if len(unique)==0: 
-          unique=i.copy()
-        else:
-          unique=unique.union(i)
-
-      uniquelist=list(unique)
-      count=[0]*len(uniquelist)
-      k=0
-      for i in uniquelist:
-        for j in newdict.values():
-          if i in j:
-            count[k]+=1
-        k+=1
-
-      k1=0
-      answer=[]
-
-      for i in uniquelist:
-        if count[k1]==len(self.__DICT.get(i)):
-          answer.append(self.__DICT.get(i))
-          k1+=1
-
-      for i in answer:
-        print(i)
+    a=set()
+    for i in find:
+      if i in self.__INVERT_DICT.keys():
+        a.update((self.__INVERT_DICT.get(i)))
+    for i in a:
+      if self.__DICT.get(i).issubset(find):
+        print(self.__DICT.get(i))
 
   def showTable(self):
     for i in self.__DICT.keys():
@@ -190,7 +150,6 @@ class SQL:
       return print('error')
 
   def newsearch(self,text):
-    #template=re.findall(r'\s*(SEARCH)\s+(\w+)\s+(WHERE|)\s+(CONTAINS|CONTAINED_BY|INTERSECTS|)\s+\{([^}]+)\}\s*;\s*',text.upper())
     template=re.findall(r'\s*(SEARCH)\s+(\w+)\s*(\w+|)\s*(CONTAINS|CONTAINED_BY|INTERSECTS|)\s*(\{([^}]+|)\}|)\s*;\s*',text.upper())
     if len(template)!=0:
       name=re.findall(r'\w\s+(\w+)',text)[0]
@@ -203,7 +162,9 @@ class SQL:
         if temp[0].upper()=='SEARCH' and temp[2].upper()=='WHERE' and temp[3].upper()=='CONTAINS':
           return self.__OBJ[name].scontains(self.__getNumber(list(template[0])[-1]))     
         if temp[0].upper()=='SEARCH' and temp[2]=='' and temp[3]=='' and temp[4]=='' and temp[5]=='':
-          return self.__OBJ[name].showTable() 
+          return self.__OBJ[name].showTable()
+        else:
+          return print('error3') 
       else:
         return print('wrong name')
     else:
@@ -276,4 +237,4 @@ class SQL:
         self.parser(i)
 
 s=SQL()
-S.process()
+s.process()
